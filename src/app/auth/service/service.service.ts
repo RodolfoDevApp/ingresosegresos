@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducer';
 import * as auth from '../auth.actions';
 import { Subscription } from 'rxjs';
+import { UnSetItems } from 'src/app/ingreso-egreso/ingreso-egreso.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,11 @@ import { Subscription } from 'rxjs';
 export class ServiceService {
   
   userSubs!: Subscription;
+  private _user!: Usuario | null;
+
+  get user(){
+    return {...this._user};
+  }
 
   constructor(
     public auth: AngularFireAuth,
@@ -32,11 +38,14 @@ export class ServiceService {
         .subscribe((res:any) => {
           console.log('set');
           const user = Usuario.fromFirebase(res);
+          this._user = user;
           this.store.dispatch(auth.setUser({user}));       
         });
       } else {
+        this._user = null;
         this.userSubs.unsubscribe();
         this.store.dispatch( auth.unSetUser());
+        this.store.dispatch(UnSetItems());
       }
     })
   }
