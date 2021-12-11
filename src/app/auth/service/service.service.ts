@@ -43,7 +43,7 @@ export class ServiceService {
         });
       } else {
         this._user = null;
-        this.userSubs.unsubscribe();
+        this.userSubs?.unsubscribe();
         this.store.dispatch( auth.unSetUser());
         this.store.dispatch(UnSetItems());
       }
